@@ -1,5 +1,6 @@
 package me.psrcek.triangleChallenge;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 public class Triangle {
@@ -246,7 +247,7 @@ public class Triangle {
 
 		for (int y = p.y + 1; y != r.y - 1; y = y + 1) {
 			for (x = lefts[y]; x <= rights[y]; x = x + 1) {
-				bI.setRGB((int)x, y, 255);
+				bI.setRGB((int)x, y, new Color(0, 255, 0).getRGB());
 			}
 		}
 
