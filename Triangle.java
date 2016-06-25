@@ -241,16 +241,60 @@ public class Triangle {
 				}
 			}
 		}
-
-		// Arrays from q to r have been calculated
-		// Time to actually draw the polygon!
-
+		
+		// create color constatnts
+		
+		int p1red = (p1.z >> 16) & 0xFF;
+		int p1green = (p1.z >> 8) & 0xFF;
+		int p1blue = p1.z & 0xFF;
+		
+		int p2red = (p2.z >> 16) & 0xFF;
+		int p2green = (p2.z >> 8) & 0xFF;
+		int p2blue = p2.z & 0xFF;
+		
+		int p3red = (p3.z >> 16) & 0xFF;
+		int p3green = (p3.z >> 8) & 0xFF;
+		int p3blue = p3.z & 0xFF;
+		
+		// draw!
+		
 		for (int y = p.y + 1; y != r.y - 1; y = y + 1) {
 			for (x = lefts[y]; x <= rights[y]; x = x + 1) {
-				bI.setRGB((int)x, y, new Color(0, 255, 0).getRGB());
+				
+				int red = interpolate((int) x, y, p1red, p2red, p3red);
+				int green = interpolate((int) x, y, p1green, p2green, p3green);
+				int blue = interpolate((int) x, y, p1blue, p2blue, p3blue);
+				
+				//System.out.println("xyrgb: " + (int)x + ", " + y + ", " + red + ", " + green + ", " + blue);
+				
+				bI.setRGB((int)x, y, new Color(red, green, blue).getRGB());
 			}
 		}
 
 		return bI;
+	}
+	
+	private int interpolate(int x, int y, int v1, int v2, int v3) {
+		Vector p1v = new Vector(p1.x, p1.y);
+		Vector p2v = new Vector(p2.x, p2.y);
+		Vector p3v = new Vector(p3.x, p3.y);
+		
+		Vector f = new Vector(x, y);
+		
+		// lolol weighted average
+		
+		double a1 = triangleArea(f, p2v, p3v);
+		double a2 = triangleArea(f, p1v, p3v);
+		double a3 = triangleArea(f, p1v, p2v);
+		
+		return (int) ((a1 * v1 + a2 * v2 + a3 * v3) / (a1 + a2 + a3));
+		
+	}
+	
+	private double triangleArea(Vector p1, Vector p2, Vector p3) {
+		double dist1 = Math.sqrt(Math.pow(Math.abs(p1.x - p2.x), 2) + Math.pow(Math.abs(p1.y - p2.y), 2));
+		double dist2 = Math.sqrt(Math.pow(Math.abs(p1.x - p3.x), 2) + Math.pow(Math.abs(p1.y - p3.y), 2));
+		double area = (dist1 * dist2) / 2;
+		return area;
 	}
 }
